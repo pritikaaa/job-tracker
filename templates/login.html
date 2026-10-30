@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width:380px; margin:48px auto 0;">
+  <h2 style="text-align:center">Sign in</h2>
+  <form class="card" method="post" style="max-width:none">
+    {% if error %}
+    <div style="background:#f6dede; color:#8a2323; padding:9px 12px; border-radius:4px; margin-bottom:6px; font-size:14px;">{{ error }}</div>
+    {% endif %}
+    <label for="password" style="margin-top:6px">Password</label>
+    <input id="password" type="password" name="password" required autofocus autocomplete="current-password">
+    <div style="margin-top:18px">
+      <button class="btn" type="submit" style="width:100%">Sign in</button>
+    </div>
+  </form>
+  <p class="muted" style="text-align:center; margin-top:14px">Private tracker. Only the owner can view or change applications.</p>
+</div>
+{% endblock %}
