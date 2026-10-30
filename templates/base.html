@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Job Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#faf7f2; --card:#ffffff; --text:#2a2622; --muted:#7a7068; --line:#e7dfd3;
+      --accent:#7b2d26; --accent-dark:#5f211c;
+      --serif:'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --display:'Playfair Display', Georgia, 'Times New Roman', serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:var(--serif); font-size:16px; background:var(--bg); color:var(--text); }
+
+    /* Header: title centered, button on the right */
+    header { background:var(--card); border-bottom:1px solid var(--line); padding:18px 28px;
+             display:grid; grid-template-columns:1fr auto 1fr; align-items:center; }
+    header .brand { grid-column:2; font-family:var(--display); font-weight:700; font-size:30px;
+                    letter-spacing:.5px; color:var(--text); text-decoration:none; text-align:center; }
+    header .brand small { display:block; font-family:var(--serif); font-weight:400; font-style:italic;
+                          font-size:13px; color:var(--muted); letter-spacing:0; margin-top:2px; }
+    header .actions { grid-column:3; justify-self:end; }
+    header .hunt { grid-column:1; justify-self:start; display:flex; flex-direction:column; align-items:center;
+                   color:var(--accent); }
+    header .hunt span { font-style:italic; font-size:13px; color:var(--muted); margin-top:2px; }
+
+    main { max-width:1100px; margin:32px auto; padding:0 20px; }
+    h2 { font-family:var(--display); font-weight:600; font-size:26px; margin:0 0 16px; }
+    a { color:var(--accent); }
+
+    .btn { display:inline-block; background:var(--accent); color:#fff; border:0; padding:9px 16px; border-radius:4px;
+           text-decoration:none; cursor:pointer; font:500 15px var(--serif); transition:background .15s; }
+    .btn:hover { background:var(--accent-dark); }
+    .btn.secondary { background:#fff; color:var(--text); border:1px solid var(--line); }
+    .btn.secondary:hover { background:#f4efe7; }
+    .btn.danger { background:#fff; color:#9b1c1c; border:1px solid #ecc5c5; }
+    .btn.danger:hover { background:#fbeeee; }
+
+    .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px; margin-bottom:26px; }
+    .stat { background:var(--card); border:1px solid var(--line); border-top:3px solid var(--line); border-radius:4px;
+            padding:14px 16px; text-decoration:none; color:inherit; text-align:center; transition:transform .15s, box-shadow .15s; }
+    .stat:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(60,40,20,.08); }
+    .stat.active { border-top-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
+    .stat .n { font-family:var(--display); font-size:32px; font-weight:700; }
+    .stat .l { color:var(--muted); font-size:14px; font-style:italic; }
+
+    table { width:100%; border-collapse:separate; border-spacing:0; background:var(--card);
+            border:1px solid var(--line); border-radius:4px; overflow:hidden; }
+    th, td { text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); font-size:15px; vertical-align:top; }
+    tbody tr:last-child td { border-bottom:0; }
+    tbody tr:hover { background:#fcfaf6; }
+    th { background:#f4efe7; color:var(--muted); font-family:var(--display); font-weight:600; font-size:14px; letter-spacing:.3px; }
+
+    .badge { display:inline-block; padding:3px 10px; border-radius:999px; font:600 13px var(--serif); }
+    .st-applied      { background:#e8ecf5; color:#2f3f73; }
+    .st-heard-back   { background:#fbefd0; color:#7a5300; }
+    .st-interviewing { background:#dfeaf7; color:#1d4a80; }
+    .st-offer        { background:#dff0e2; color:#1e5e2c; }
+    .st-rejected     { background:#f6dede; color:#8a2323; }
+
+    .toolbar { display:flex; gap:8px; margin-bottom:16px; }
+    input, select, textarea { width:100%; padding:9px 11px; border:1px solid var(--line); border-radius:4px;
+                              font:inherit; background:#fff; color:var(--text); }
+    input:focus, select:focus, textarea:focus { outline:2px solid rgba(123,45,38,.25); border-color:var(--accent); }
+    .toolbar input { max-width:300px; }
+    form.card { background:var(--card); border:1px solid var(--line); border-radius:4px; padding:24px; max-width:640px; }
+    label { display:block; font-size:14px; font-style:italic; color:var(--muted); margin:14px 0 4px; }
+    .row { display:flex; gap:8px; align-items:center; }
+    .muted { color:var(--muted); font-size:13px; font-style:italic; }
+    td form { display:inline; }
+    td select.badge { padding:3px 8px; font-size:13px; width:auto; border:0; cursor:pointer; }
+
+    @media (max-width:640px) {
+      header { grid-template-columns:1fr; gap:10px; justify-items:center; }
+      header .brand, header .actions { grid-column:1; justify-self:center; }
+      header .hunt { display:none; }
+      table { display:block; overflow-x:auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hunt" aria-hidden="true">
+      <svg viewBox="0 0 150 84" width="110" height="62" fill="none" stroke="currentColor"
+           stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <!-- briefcase -->
+        <rect x="8" y="26" width="80" height="50" rx="6" fill="#f4efe7"/>
+        <path d="M32 26v-8a5 5 0 0 1 5-5h22a5 5 0 0 1 5 5v8"/>
+        <path d="M8 48h80"/>
+        <rect x="42" y="43" width="12" height="10" rx="2" fill="#fff"/>
+        <!-- magnifying glass -->
+        <circle cx="94" cy="38" r="22" fill="rgba(255,255,255,.75)"/>
+        <circle cx="94" cy="38" r="15" stroke-width="2" opacity=".35"/>
+        <path d="M110 55l22 22" stroke-width="7"/>
+        <!-- sparkle -->
+        <path d="M128 12v10M123 17h10" stroke-width="2.5"/>
+      </svg>
+     
+    </div>
+    <a class="brand" href="{{ url_for('index') }}">Job Tracker<small></small></a>
+    <div class="actions"><a class="btn" href="{{ url_for('add') }}">+ Add application</a></div>
+  </header>
+  <main>{% block content %}{% endblock %}</main>
+</body>
+</html>

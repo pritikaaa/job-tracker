@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="stats">
+  <a class="stat {{ 'active' if not current }}" href="{{ url_for('index') }}">
+    <div class="n">{{ total }}</div><div class="l">All applications</div>
+  </a>
+  {% for s in statuses %}
+  <a class="stat {{ 'active' if current == s }}" href="{{ url_for('index', status=s) }}">
+    <div class="n">{{ counts[s] }}</div><div class="l">{{ s }}</div>
+  </a>
+  {% endfor %}
+</div>
+
+<form class="toolbar" method="get">
+  {% if current %}<input type="hidden" name="status" value="{{ current }}">{% endif %}
+  <input name="q" value="{{ q }}" placeholder="Search company or role">
+  <button class="btn secondary" type="submit">Search</button>
+</form>
+
+{% if rows %}
+<table>
+  <thead>
+    <tr><th>Company</th><th>Role</th><th>Status</th><th>Applied</th><th>Notes</th><th></th></tr>
+  </thead>
+  <tbody>
+  {% for r in rows %}
+    <tr>
+      <td>
+        {% if r['link'] %}<a href="{{ r['link'] }}" target="_blank" rel="noopener">{{ r['company'] }}</a>
+        {% else %}{{ r['company'] }}{% endif %}
+        {% if r['contact'] %}<div class="muted">{{ r['contact'] }}</div>{% endif %}
+      </td>
+      <td>{{ r['role'] }}</td>
+      <td>
+        <form method="post" action="{{ url_for('set_status', job_id=r['id']) }}">
+          <select name="status" onchange="this.form.submit()" class="badge st-{{ r['status']|lower|replace(' ', '-') }}">
+            {% for s in statuses %}
+            <option value="{{ s }}" {{ 'selected' if s == r['status'] }}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </form>
+        <div class="muted">updated {{ r['updated_on'] }}</div>
+      </td>
+      <td>{{ r['applied_on'] or '' }}</td>
+      <td>{{ r['notes'] }}</td>
+      <td>
+        <a class="btn secondary" href="{{ url_for('edit', job_id=r['id']) }}">Edit</a>
+        <form method="post" action="{{ url_for('delete', job_id=r['id']) }}"
+              onsubmit="return confirm('Delete this application?')">
+          <button class="btn danger" type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="muted">No applications yet. <a href="{{ url_for('add') }}">Add your first one.</a></p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ 'Edit application' if job else 'Add application' }}</h2>
+<form class="card" method="post">
+  <label>Company</label>
+  <input name="company" required value="{{ job['company'] if job else '' }}">
+
+  <label>Role</label>
+  <input name="role" required value="{{ job['role'] if job else '' }}">
+
+  <label>Status</label>
+  <select name="status">
+    {% for s in statuses %}
+    <option value="{{ s }}" {{ 'selected' if job and job['status'] == s }}>{{ s }}</option>
+    {% endfor %}
+  </select>
+
+  <label>Date applied</label>
+  <input type="date" name="applied_on" value="{{ job['applied_on'] if job and job['applied_on'] else today }}">
+
+  <label>Job posting link</label>
+  <input name="link" value="{{ job['link'] if job and job['link'] else '' }}">
+
+  <label>Contact (recruiter / email)</label>
+  <input name="contact" value="{{ job['contact'] if job and job['contact'] else '' }}">
+
+  <label>Notes (interview dates, salary, feedback...)</label>
+  <textarea name="notes" rows="4">{{ job['notes'] if job and job['notes'] else '' }}</textarea>
+
+  <div class="row" style="margin-top:16px">
+    <button class="btn" type="submit">Save</button>
+    <a class="btn secondary" href="{{ url_for('index') }}">Cancel</a>
+  </div>
+</form>
+{% endblock %}
